@@ -1,12 +1,108 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
-    </body>
-</html>
+<html >
+<head >
+    <meta name="viewport" content="width=device-width, initial-scale=1" >
+    <meta charset="UTF-8" >
+    <title >{% block title %}
+
+            Чем тролейбус не такси?{% endblock %}
+    </title >
+    {% block stylesheets %}
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+              crossorigin="anonymous" >
+        <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css" >
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js" ></script >
+        <script src="https://unpkg.com/vue-yandex-maps@0.8.14/dist/vue-yandex-maps.umd.js" ></script >
+        <script src="https://api-maps.yandex.ru/2.1/?apikey=22d47171-61c4-429f-bfaf-c0a883e12290&lang=ru_RU"
+                type="text/javascript" >
+        </script >
+        <script
+                src="https://code.jquery.com/jquery-3.4.1.js"
+                integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+                crossorigin="anonymous"></script>
+        {{ encore_entry_link_tags('app') }}
+    {% endblock %}
+</head >
+<body >
+{% block body %}
+    <div id="app" >
+        <welcome >
+        </welcome >
+    </div >
+
+
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}
+</body >
+<script type="text/javascript" >
+    // Функция ymaps.ready() будет вызвана, когда
+    // загрузятся все компоненты API, а также когда будет готово DOM-дерево.
+    ymaps.ready(init);
+
+    function init() {
+        // Создание карты.
+
+        var myMap = new ymaps.Map("map", {
+            // Координаты центра карты.
+            // Порядок по умолчанию: «широта, долгота».
+            // Чтобы не определять координаты центра карты вручную,
+            // воспользуйтесь инструментом Определение координат.
+            center: [52.261543, 104.265431],
+            // Уровень масштабирования. Допустимые значения:
+            // от 0 (весь мир) до 19.
+            zoom: 12,
+            controls: []
+
+
+        });
+        myMap.container.fitToViewport();
+
+
+        window.myMap2 = myMap2;
+        myPlacemark = new ymaps.Placemark([52.261543, 104.265431], {
+            // Чтобы балун и хинт открывались на метке, необходимо задать ей определенные свойства.
+            balloonContentHeader: "Балун метки",
+            balloonContentBody: "Содержимое <em>балуна</em> метки",
+            balloonContentFooter: "Подвал",
+            hintContent: "Хинт метки"
+        });
+
+        var multiRoute = new ymaps.multiRouter.MultiRoute({
+            // Точки маршрута. Точки могут быть заданы как координатами, так и адресом.
+            referencePoints: [
+                'Иркутск, Игошина 1а',
+                'Иркутск, Гоголя 15', // улица Льва Толстого.
+            ], params: {
+                // Тип маршрута: на общественном транспорте.
+                routingMode: "masstransit"
+            }
+        }, {
+            boundsAutoApply: true
+        });
+
+
+        window.add1 = function add_1(){
+            myMap.geoObjects.removeAll();
+            myMap.geoObjects.add(multiRoute);
+        }
+        window.add2 = function add_2(){
+            window.myMap.geoObjects.removeAll();
+            window.myMap.geoObjects.add(multiRoute2);
+        }
+
+        multiRoute.model.events.add('requestsuccess', function () {
+            // Получение ссылки на активный маршрут.
+            var activeRoute = multiRoute.getActiveRoute();
+            // Вывод информации о маршруте.
+            console.log("Длина: " + activeRoute.properties.get("distance").text);
+            console.log("Время прохождения: " + activeRoute.properties.get("index").text);
+        })
+
+        //myMap.geoObjects.add(myPlacemark);
+
+    }
+</script >
+</html >
